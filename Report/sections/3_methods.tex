@@ -1,12 +1,12 @@
 \section{Methodology}\label{sec:methods}
 
-As described above, the main contribution of Tran and Yates in the discussed work is to consider entities independently of the underlying large language model. In order to do so, they combine embeddings of an arbitrary large language model with embeddings of the entities from the respective documents and queries. For the embeddings of entities, they introduce some kind of multiple views on entities: Different sets of entities within queries and documents represent different perspectives on the queries and documents. Depending which view a query displays, different documents or parts of documents might be relevant.
+Tran and Yates' primary contribution lies in their approach to consider entities independently of the underlying large language model. To achieve this, they combine embeddings from an arbitrary large language model with embeddings of entities extracted from documents and queries. The embeddings of entities offer multiple views on the same information, with different sets of entities representing various perspectives on the queries and documents. Depending on the displayed view, different relevant documents or sections of documents can be identified.
 
-In contrast to the previously described methods in \autoref{subsec:dense}, the separate embeddings of queries and documents are not inserted as components into a learned framework, but are merely merged into a joint vector space. As a result, a final embedding in the joint vector space is derived, which is used to calculate similarities between different vectors. Therefore, Tran and Yates, stick to the bi-encoder model (see \autoref{sec:introduction}), which allows indexing of embeddings for documents and enables fast ranking computations via ANN search. 
+Tran and Yates do not incorporate separate embeddings of queries and documents into a learned framework. Instead, they merge these embeddings into a joint vector space. This joint vector space results in a final embedding used to calculate similarities between vectors. Thus, Tran and Yates adopt the bi-encoder model (as discussed in \autoref{sec:introduction}), allowing for indexing of document embeddings and enabling fast ranking computations through ANN search. 
 
 \subsection{General Model}\label{subsec:general_model}
 
-The proposed method of Tran and Yates incorporates embeddings of documents and entities independently. To achieve a joined vector space, they merge embeddings of both for each query and document. This general approach is illustrated in \autoref{fig:general_model}: Since Tran and Yates follow the bi-encoder approach (see \autoref{sec:introduction}), embeddings for queries and documents are created independently of each other using a pre-trained large language model. 
+Tran and Yates' proposed method involves independent embeddings of documents and entities. The process entails merging the embeddings of both documents and entities for each query and document to achieve a joint vector space, as depicted in \autoref{fig:general_model}. Following the bi-encoder approach, the embeddings for queries and documents are created independently using a pre-trained large language model.
 
 \begin{figure}[!htb]
     \includegraphics[trim={1.5cm 3cm 1.5cm 3cm}, clip, width=\textwidth]{resources/general_model} 
@@ -14,15 +14,15 @@ The proposed method of Tran and Yates incorporates embeddings of documents and e
     \label{fig:general_model}
 \end{figure}
 
-In their work, Tran and Yates use a distilled version of BERT (Sanh et al. \cite{sanh2019distilbert}), which was fine-tuned via TAS BERT approach by Hofst{\"a}tter et al. \cite{tasbert} for information retrieval task. The distilled version of BERT is used by Tran and Yates with the objective of maintaining low computational costs while losing little effectiveness. 
+To maintain low computational costs without compromising effectiveness, Tran and Yates use a distilled version of BERT that was fine-tuned via the TAS BERT approach for information retrieval by Hofst{"a}tter et al. \cite{tasbert}.
 
-The term TAS BERT of the method of Hofst{\"a}tter et al. refers to the term 'topic aware sampled BERT', whereby sampling during training process of the information retrieval system is meant. In concrete, within TAS BERT approach the queries of the training dataset are clustered in advance based on different topics. During training process, query samples are extracted only from clusters of identical topics. This is intended to make the information retrieval model more sensitive to differing topics. 
+The TAS BERT approach employs topic-aware sampling for fine-tuning on information retrieval task, thus queries in the training dataset are clustered based on different topics. During training, query samples are extracted exclusively from clusters with identical topics, aiming to enhance the sensitivity of the information retrieval model to different topics.
+
+In the dense retrieval setting, embeddings of tokens are compared using similarity measurements to rank the best documents concerning a query. Tran and Yates follow a similar principle but enhance it by incorporating embeddings of entities. For each query and document, a single entity embedding is generated and concatenated with the textual embedding to create an embedding that captures both the semantic context and entity information.
 
 In a usual dense retrieval setting, the generated embeddings of tokens are then compared using similarity measurements. When a query is submitted to a system, the ranking of the best documents with respect to the query is carried out, based on the calculated similarity score between the duets of the given query and all documents. 
 
-For their model, Tran and Yates use the identical principle, but enhance it with embeddings of entities. In addition to the textual embeddings of a pre-trained language model, for each query and each document a single entity embedding is generated. Subsequently, the textual embedding is combined with the entity embedding in order to create an embedding that contains both the information about the semantic context and the information about the entities. The term combination here refers to concatenation of both vectors. 
-
-Experimental results of Tran and Yates showed that concatenation yields the best results for combining both embeddings of text and entities compared to others like max pooling and sum pooling. \autoref{tab:operator} displays the respective analysis of Tran and Yates based on their experimental setup, which is introduced in detail in \autoref{sec:results}. Apart from the analytical point of view, the approach of concatenation offers the advantage that it can be understood quite intuitively.
+Experimental results demonstrate that concatenation produces superior results for combining text and entity embeddings compared to other methods as max pooling and sum pooling. \autoref{tab:operator} displays the respective analysis of Tran and Yates based on their experimental setup, which is introduced in detail in \autoref{sec:results}. Apart from the analytical point of view, the approach of concatenation offers the advantage that it can be understood quite intuitively.
 
 \begin{table}[!htb]
     \centering
@@ -40,29 +40,31 @@ Experimental results of Tran and Yates showed that concatenation yields the best
     \label{tab:operator}
 \end{table}
 
-However, there is an issue to be solved in the context of concatenation: Since the vectors of the word embeddings and the entity embeddings are generated in a different vector space, this setup leads to biased similarity results. More precisely, the dimension of the word embeddings of the distilled TAS BERT model is 768 and of the word embeddings 100. Moreover, the magnitudes of the embeddings do not necessarily coincide. To overcome this problem, Tran and Yates introduce a transformation matrix $W \in \mathbb{R}^{100 \times 100}$ for the vectors of the embeddings. So let $\mathbf{E}(t)$ be the embedding of entities of text $t$, the transformed entity embedding is given as:
+However, concatenation introduces a challenge as the word embeddings and entity embeddings are generated in different vector spaces with varying dimensions and magnitudes. To address this issue, Tran and Yates introduce a transformation matrix $W \in \mathbb{R}^{100 \times 100}$ to transform the entity embeddings into the joint vector space.
+
+So let $\mathbf{E}(t) \in \mathbb{R}^{100}$ be the embedding of entities of text $t$, the transformed entity embedding is given as:
 \begin{align}
     \mathbf{R}_{entity}(t) = W^T \cdot \mathbf{E}(t)
 \end{align}
-The values of the matrix are determined during the training process of the entire model and thus reflect a meaningful transformation of the embeddings into a joint vector space. 
+The values of the matrix are determined during training process and thus reflect a meaningful transformation of the embeddings into a joint vector space. 
 
-Given text $t$ and its corresponding word embedding $\mathbf{R}_{text}(t)$ derived by the pre-trained language model, the final vector representation of $t$ is then calculated as:
+Given a text $t$ with its corresponding word embedding $\mathbf{R}_{text}(t)$ derived from the pre-trained language model, the final vector representation of $t$ is obtained by concatenating the transformed entity embedding $\mathbf{R}_{entity}(t)$ and the word embedding:
 \begin{align}
-    \mathbf{R}_{final}(t) &= \mathbf{R}_{text}(t) \oplus \mathbf{R}_{entity}(t)
+\mathbf{R}_{final}(t) &= \mathbf{R}_{text}(t) \oplus \mathbf{R}_{entity}(t)
 \end{align}
 
-As a further optional addition to their model, Tran and Yates include an external scoring source that measures the relationship between query entities and documents. They use a kernel pooling score that is intended to measure the importance of entities of queries which also occur within documents. Accordingly, this approach requires knowledge of the query and document at runtime. Therefore, this approach belongs to methods interaction-based approaches of incorporating entities within retrieval tasks, as described in \autoref{sec:related_work}.
-
-This kernel pooling score, called KNRM-signal will be elaborated in detail in the following subsection. Together with the KNRM-signal $S_{knrm}$ of a query $q$ and a document $d$ the final vector representation of the model of Tran and Yates resolves to 
+The ranking score value of a pair of query $q$ and document $d$ is then obtained using the dot product $\otimes$ as a similarity measure:
 \begin{align}
-    \mathbf{R}_{final\_knrm}(t) =
-    \begin{cases}
-         \mathbf{R}_{text}(t) \oplus \mathbf{R}_{entity}(t) + 1 & t \text{~is query} \\
-         \mathbf{R}_{text}(t) \oplus \mathbf{R}_{entity}(t) + S_{knrm}(t) & t \text{~is document} \label{eq:knrm}
-    \end{cases}
+    \mathbf{Score}(q,d) &= \left( \mathbf{R}_{final}(q) \otimes \mathbf{R}_{final}(d) \right) \\
+    &= \left( \mathbf{R}_{text}(q) \otimes \mathbf{R}_{text}(d) \right) \oplus \left( \mathbf{R}_{entity}(q) \otimes \mathbf{R}_{entity}(d) \right)
 \end{align}
 
-Since the interaction of entities in queries with each other is always ideal, the maximum value $S_{knrm}(t)$ will be reached whenever $t$ is a query. As shown in \autoref{subsec:knrm}, the supremum of $S_{knrm}(t)$ is 1, therefore the value for $S_{knrm}(t)$ is set to 1, if t is a query.
+As an optional addition to their model, Tran and Yates include an external scoring source called KNRM signal, which measures the relationship between query entities and documents. This interaction-based approach requires knowledge of the query and document at runtime. For details, consult following \autoref{subsec:knrm}.
+
+Incorporating the KNRM signal $S_{knrm}$ into the final ranking score yields the score with KNRM signal, denoted by $\mathbf{Score}_{knrm}(q,d)$:
+\begin{align}
+    \mathbf{Score}_{knrm}(q,d) &= \left( \mathbf{R}_{final}(q) \otimes \mathbf{R}_{final}(d) \right) + S_{knrm}
+\end{align}
 
 \subsection{KNRM Signal}\label{subsec:knrm}
 
@@ -83,9 +85,9 @@ Despite being an interaction-based model that requires scoring during runtime fo
 
 \subsection{Generating Entity Embeddings\label{subsec:entity_embeddings}}
 
-As described in \autoref{subsec:general_model}, Tran and Yates create embeddings for both word tokens and entities in queries and documents. While the word token embeddings are generated using TAS BERT through the dense retrieval approach, the primary focus of their contribution lies in the creation of entity embeddings. In particular, since queries and documents usually contain more than one entity, they need to be aggregated to a single embedding.
+As described in \autoref{subsec:general_model}, Tran and Yates create embeddings for both word tokens and entities in queries and documents. While the word token embeddings are generated using pre-trained TAS BERT, the primary focus of the contribution of Tran and Yates lies in the creation of entity embeddings. In particular, as queries and documents often contain multiple entities, these entities need to be aggregated into a single embedding.
 
-In order to do so, the example given in \autoref{fig:example} shall be introduced: Given the query 'Favourite book bert sesame street' and a corresponding document that mentions Bert as a character of Sesame Street who enjoys the book Boring Stories, there are three entities: Bert, Sesame Street, and Boring Stories.
+To illustrate this process, consider the example depicted in \autoref{fig:example}. In this example, the query 'Favourite book bert sesame street' corresponds to a document that mentions three entities: Bert, Sesame Street and Boring Stories.
 
 \begin{figure}[!htb]
     \includegraphics[trim={1.5cm 5.5cm 1.5cm 2cm}, clip, width=\textwidth]{resources/example} 
@@ -96,16 +98,16 @@ In order to do so, the example given in \autoref{fig:example} shall be introduce
 \subsubsection{Extracting Entities}\label{subsubsec:extracting_entities}
 
 To aggregate multiple entities in a document or query, Tran and Yates first extract these entities from the text using external frameworks Dexter (Ceccarelli et al. \cite{ceccarelli2013dexter}) and Wikipedia2Vec (Yamada et. al \cite{yamada2018wikipedia2vec}).
-
-The Dexter framework is an entity linkage system that resolves entity mentions in text to corresponding entities in a knowledge base. In particular, Dexter employs a combination of methods, including named entity recognition and pattern matching, to perform this task. 
-
-Wikipedia2Vec, on the other hand, leverages the structure of Wikipedia to generate dense vector representations (embeddings) for words, articles, and entities. It utilizes the Word2Vec algorithm (Mikolov et al. \cite{mikolov2013distributed}) to capture semantic relationships from Wikipedia, producing high-dimensional embeddings.
+\begin{itemize}
+    \item The Dexter framework is an entity linkage system that resolves entity mentions in text to corresponding entities in a knowledge base. In particular, Dexter employs a combination of methods, including named entity recognition and pattern matching, to perform this task. 
+    \item Wikipedia2Vec leverages the structure of Wikipedia to generate dense vector representations (embeddings) for words, articles, and entities. It utilizes the Word2Vec algorithm (Mikolov et al. \cite{mikolov2013distributed}) to capture semantic relationships from Wikipedia, producing high-dimensional embeddings.
+\end{itemize}
 
 The extraction procedure involves submitting a document or query to Dexter, which extracts entity mentions from the given text. These entity names are then passed on to the knowledge base, which transforms them into embeddings. Wikipedia2Vec provides vectors in dimension 100 as default, Tran and Yates keep this value in their model. \autoref{fig:entity_extraction} visualizes this process.
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[trim={2cm 3cm 2cm 2cm}, clip, width=0.9\textwidth]{resources/entity_extraction} 
+    \includegraphics[trim={2cm 3cm 2cm 2cm}, clip, width=0.8\textwidth]{resources/entity_extraction} 
     \caption{Process of entity extraction}
     \label{fig:entity_extraction}
 \end{figure}
@@ -118,50 +120,52 @@ For queries, Tran and Yates adopt a straightforward approach. They aggregate the
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[trim={2cm 6cm 2cm 6cm}, clip, width=\textwidth]{resources/queries} 
+    \includegraphics[trim={2cm 6cm 2cm 6cm}, clip, width=0.8\textwidth]{resources/queries} 
     \caption{Process of generating a single entity embedding for a query}
     \label{fig:queries}
 \end{figure}
 
 \subsubsection{Combining Entities for Documents}\label{subsec:models}
 
-Documents usually contain many different entities, as the example in \autoref{fig:example} indicates. Additionally, documents might also cover different aspects of a topic, so entities from very different areas might appear within them. This factor adds more complexity to the aggregation of embeddings for documents than for queries. To overcome this issue, Tran and Yates elaborated three different methods to aggregate embeddings of documents, which build upon each other:
+Documents usually contain many different entities, as the example in \autoref{fig:example} indicates. Additionally, documents might also cover different aspects of a topic, so entities from very different areas might appear within them. To handle this additional complexity, the authors proposed three successive methods for entity aggregation in documents, namely:
 
 \begin{itemize}
     \item Single Entity Representation (EVA Single)
     \item Query-Aware Single Entity Representation (EVA Single-QA)
     \item Multiple Entity View Representation (EVA Multi)
-  \end{itemize}
+\end{itemize}
 
-The term EVA refers to \underline{E}ntity \underline{V}iews in Dense Retriev\underline{a}l. The concept of Entity Views, the name-giving term for the paper by Tran and Yates, is used in particular in the third method EVA Multi and will be introduced in the following.
+The term 'EVA' stands for \underline{E}ntity \underline{V}iews in Dense Retriev\underline{a}l. The concept of 'Entity Views' which gives the paper its name, is particularly relevant in the third method, EVA Multi, and will be elaborated in the following sections.
 
 \paragraph*{EVA Single}
 
-The first approach of aggregating the entities of a document is similar to the one used for queries. The idea of the Single Entity Representation approach is to extract all entities of a document and then create a single average output embedding. Analogous to \autoref{fig:queries} for queries, this approach is visualized in \autoref{fig:eva_single}.
+ The key idea behind the Single Entity Representation is to extract all entities present in the document and subsequently generate a single output embedding by computing the average of these entity embeddings. This process is analogous to the one depicted in \autoref{fig:queries} for queries, and a visual representation for documents is illustrated in \autoref{fig:eva_single}.
+
+The initial approach for aggregating entities in a document, called EVA Single, is similar to the one used for queries. The key idea behind the Single Entity Representation is to extract all entities present in the document and subsequently generate a single output embedding by computing the average of these entity embeddings. This process is analogous to the one depicted in \autoref{fig:queries} for queries, and a visual representation for documents is illustrated in \autoref{fig:eva_single}.
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[trim={2cm 6cm 1.5cm 6cm}, clip, width=\textwidth]{resources/eva_single} 
+    \includegraphics[trim={2cm 5cm 1.5cm 6cm}, clip, width=0.8\textwidth]{resources/eva_single} 
     \caption{Process of generating an entity embedding for a document following the EVA Single approach}
     \label{fig:eva_single}
 \end{figure}
 
-This approach does not take into account that documents can cover various topics. The query information is completely discarded and thus partially irrelevant entities are accounted for calculations of the output embedding. This leads to a bias within the ranking results, as it can be observed in \autoref{sec:results}.
+Despite its simplicity, this approach overlooks the fact that documents may cover diverse topics. By discarding query information, the EVA Single approach considers all entities, including those that may be only partially relevant to the document's main topic. Consequently, this disregards the relevance of entities within the ranking process, leading to biased results, as observed in \autoref{sec:results}.
 
 \paragraph*{EVA Single-QA}
 
-To address this problem, Tran and Yates introduce the Query-Aware Single Entity Representation, which creates embeddings focusing on the needs of the query. However, this requires the assumption that the query is known before calculations, which leads to increased computational complexity. This is due to the fact that computations for all duets of query and documents must now be performed during runtime, precomputations of embeddings for documents and indexing is no longer possible. This effect is reflected within the results (see \autoref{sec:results}), which prove a high latency in the case of the EVA-Single QA approach.
+To address this problem, Tran and Yates introduce the Query-Aware Single Entity Representation, which creates embeddings that are tailored to the specific needs of a given query.  However, this improvement comes with increased computational complexity since it assumes knowledge of the query beforehand. As a result, calculations for all query-document pairs must be performed during runtime, eliminating the possibility of precomputing document embeddings and indexing, leading to higher latency, as observed in \autoref{sec:results}.
 
 The underlying idea of the EVA single QA model is to filter the entities of a document based on the information of a given query and select only entities with high similarity to a query entity. \autoref{fig:eva_single_qa} visualizes this process.
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[trim={1cm 6.5cm 2cm 6cm}, clip, width=\textwidth]{resources/eva_single_qa} 
+    \includegraphics[trim={1cm 6.5cm 2cm 6cm}, clip, width=0.8\textwidth]{resources/eva_single_qa} 
     \caption{Process of generating an entity embedding for a document following the EVA Single-QA approach}
     \label{fig:eva_single_qa}
 \end{figure}
 
-Filtering is done using algorithm \ref{alg:query-aware-entity-representation}, which is applied to all duets of a query $q$ and document $d$: For each entity within $q$ the algorithm searches for the entity within $d$ having the maximum cosine similarity. If this similarity extends some threshold, the respective entity of $d$ will be added to the filtered list $X_{focus}(d)$. As a final step, the single output embedding for document $d$ is calculated as the average of all entity embeddings within the filtered list $X_{focus}(d)$.
+The filtering is conducted using Algorithm \ref{alg:query-aware-entity-representation}, which is applied to each query-document pair ($q$, $d$). For every entity within $q$, the algorithm searches for the corresponding entity in $d$ that possesses the maximum cosine similarity. If the similarity exceeds a specified threshold $\alpha$, the respective entity in $d$ is added to the filtered list $X_{focus}(d)$. Subsequently, the single output embedding for document $d$ is computed as the average of all entity embeddings within $X_{focus}(d)$.
 
 \begin{algorithm}[!htb]
     \caption{Query-aware document entity representation}
@@ -184,9 +188,9 @@ Filtering is done using algorithm \ref{alg:query-aware-entity-representation}, w
 
 \paragraph*{EVA Multi}
 
-The EVA single-QA approach suffers from the issue that queries must be known before algorithm \ref{alg:query-aware-entity-representation} can be applied and the query-aware document representation can be retrieved. With the third approach, called EVA-Multi, Tran and Yates have found a solution to this problem with only minor negative side effects.
+To address the issue of known queries required by the EVA Single-QA approach, Tran and Yates propose the EVA Multi method, which introduces multiple entity views as a solution with minimal negative consequences.
 
-They analyzed their training data and realized that the number of entities in queries do not exceed two in the vast majority of instances. Based on the experimental setup described in \autoref{sec:results}, they found that 99.6 \% of the 300,000 training instances and 99.5 \% of test instances in the MS Marco Dev dataset contain two or fewer entities. \autoref{tab:query_statistics} shows the respective analysis of queries. Therefore, Tran and Yates focused their research on the assumption that it is sufficient to consider a maximum of two entities in queries.
+Analysis training data revealed that in the vast majority of instances, the number of entities in queries does not exceed two. For instance, in the MS Marco Dev dataset, 99.6 \% of the 300,000 training instances and 99.5 \% of the test instances contain two or fewer entities. Based on this observation, Tran and Yates focused their research on the assumption that it is sufficient to consider a maximum of two entities in queries.
 
 \begin{table}[!htb]
     \centering
@@ -209,9 +213,9 @@ They analyzed their training data and realized that the number of entities in qu
     \label{tab:query_statistics}
 \end{table}
 
-If one applies algorithm \ref{alg:query-aware-entity-representation} under this assumption, one notices that at most two entities remain in the filtered embedding list $X_{focus}$. This is due to the fact that the algorithm iterates over the set of all entities in the given query once. Since $X_{focus}$ therefore only contains no item, a single item or at maximum two items, the amount of all possible sets that are eligible for $X_{focus}$ is limited by $|\{\}| + |X(d)| + \binom{|X(d)|}{2}$, where $|X(d)|$ corresponds to the number of entities in $d$. 
+Under this assumption, when applying Algorithm \ref{alg:query-aware-entity-representation}, at most two entities remain in the filtered embedding list $X_{focus}$. This limitation stems from the algorithm iterating over the set of all entities in the given query once, resulting in $X_{focus}$ containing either zero, one, or at most two items. The number of all possible sets eligible for $X_{focus}$ is restricted to $|\{\}| + |X(d)| + \binom{|X(d)|}{2}$, where $|X(d)|$ corresponds to the number of entities in document $d$.
 
-Tran and Yates take advantage of this and introduce clusters of entities that can be seen as different views on a document. For the EVA Multi approach, all possible single itemsets and sets of pairs of the entities are generated. Sets of pairs are only considered, if cosine similarity between the two items within a pair extend a predefined threshold $\beta$ to ensure only reasonable entity views are generated. Final output embeddings are again calculated by averaging the embeddings of all items within each set. When applying the optional KNRM signal (see \autoref{subsec:knrm}) to this approach, the entity interaction matrix $T$ is build only upon the set of the entity embeddings of a single cluster and not on all entities within the respective document.
+Leveraging this observation, Tran and Yates introduce clusters of entities, which represent different views of a document. In the EVA Multi approach, all possible single itemsets and sets of pairs of the entities are generated. However, sets of pairs are considered only if the cosine similarity between the two entities within a pair exceeds a predefined threshold $\beta$, ensuring only relevant entity views are generated. The final output embeddings are then calculated by averaging the embeddings of all items within each set. When applying the optional KNRM signal (see \autoref{subsec:knrm}) to this approach, the entity interaction matrix $T$ is built only upon the set of entity embeddings within a single cluster, rather than considering all entities within the document.
 
 \begin{figure}[!htb]
     \centering
@@ -220,8 +224,8 @@ Tran and Yates take advantage of this and introduce clusters of entities that ca
     \label{fig:eva_multi}
 \end{figure}
 
-All the calculations can be performed independently of the information about queries and thus allow indexing. In contrast to the two previously mentioned methods EVA Single and EVA Single-QA, several entity output embeddings are now generated per document, which have to be taken into account during retrieval ranking. 
+This allows all calculations to be performed independently of query information, enabling indexing. Unlike the previous methods, EVA Single and EVA Single-QA, the EVA Multi approach generates several entity output embeddings per document.
 
-\autoref{fig:eva_multi} visualizes the process of generating the embeddings of multiple entity views / clusters. For the given example of three entities within an input document, six different views on entities and document entity representations are generated.
+\autoref{fig:eva_multi} visualizes the process of generating the embeddings of multiple entity views or clusters. For the given example of three entities within an input document, six different views on entities and document entity representations are generated.
 
 
