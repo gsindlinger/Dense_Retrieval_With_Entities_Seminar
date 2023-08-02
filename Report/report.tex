@@ -1,0 +1,189 @@
+% This template is provided for all the participants of seminars
+% offered by the database systems research group
+% Adjusted for seminar "Information Networks"
+%%%%%%%%%%%%%%%%%%%%%
+% Author information:
+%%%%%%%%%%%%%%%%%%%%%
+% Jannik Strötgen
+% Institute of Computer Science
+% Database Systems Research Group
+% INF 348 
+% 69120 Heidelberg
+% stroetgen@uni-hd.de
+%%%%%%%
+% Date: April 24, 2010
+% minor modifications: October 17, 2011
+% minor modifications: April 3, 2016 (Gertz)
+% minor modifications: April 8, 2017 (Gertz)
+% minor modifications: Dezember 4, 2018 (Gertz)
+% minor modifications: April 5, 2020 (Gertz)
+% minor modifications: April 1, 2021 (Gertz)
+% minor modifications: February 18, 2022 (Gertz)
+%%%%%%% 
+
+\documentclass[
+     11pt,         % font size
+     a4paper,      % paper format
+     oneside,
+     ]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% PACKAGES:
+
+% Use German :
+\usepackage[USenglish]{babel}
+% Input encoding
+\usepackage[utf8]{inputenc}
+% Font encoding
+\usepackage[T1]{fontenc}
+% Einbinden von URLs:
+\usepackage{url}
+% hyperrefs in the documents
+\usepackage[bookmarks=true,colorlinks,pdfpagelabels,pdfstartview = FitH,bookmarksopen = true,bookmarksnumbered = true,linkcolor = black,plainpages = false,hypertexnames = false,citecolor = black,urlcolor=black]{hyperref} 
+%\usepackage{hyperref}
+% Include Graphic-files:
+\usepackage{graphicx}
+% Include PDF links
+%\usepackage[pdftex, bookmarks=true]{hyperref}
+% Fuer Textsatz
+\usepackage{setspace}
+\usepackage{parskip}
+% For bibliography style
+\usepackage[numbers]{natbib}
+% for Latex symbols
+\usepackage{doc}
+
+\usepackage[ddmmyyyy]{datetime}
+\usepackage{nth}
+\usepackage{multirow}
+
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Titel, Autor, Seminar, Semester, Dozent %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\mytitle}{Dense Retrieval with Entity Views}
+\newcommand{\myauthor}{Johannes Gabriel Sindlinger}
+\newcommand{\myseminar}{Modern Information Retrieval }
+\newcommand{\mysemester}{Summer Term 2023}
+\newcommand{\mydozent}{Prof.~Dr.~Michael Gertz}
+\newcommand{\mydozentTwo}{Nicolas Reuter}
+\newcommand{\mydozentThree}{Ashish Chouhan}
+\newcommand{\mydozentFour}{Jayson Salazar}
+\newcommand{\mydozentFive}{John Ziegler}
+\newcommand{\myMatrikelnummer}{3729339}
+\newcommand{\myStudiengang}{Master, Computer and Data Science}
+\newcommand{\mySemester}{3}
+\newcommand{\myEmail}{johannes.sindlinger@stud.uni-heidelberg.de}
+
+% OTHER SETTINGS:
+\setlength{\parindent}{0in}
+
+% Pagestyle:
+\pagestyle{myheadings}
+\markright{\myauthor: \mytitle}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% <TITLE> %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{roman}
+\begin{titlepage}
+\begin{tabular}[l]{l}
+% Angaben zum Seminar
+Heidelberg University\\
+Institute of Computer Science\\
+\mysemester\\
+Seminar: \myseminar\\
+Instructors: \mydozent\\
+\phantom{Instructors: }\mydozentTwo\\
+\phantom{Instructors: }\mydozentThree\\
+  \phantom{Instructors: }\mydozentFour\\
+  \phantom{Instructors: }\mydozentFive
+\end{tabular}
+
+\vspace{4cm}
+\begin{center}
+\textbf{\large Seminar Paper} % Proseminararbeit,Studienarbeit, Interdisziplinaeres Projekt
+\vspace{0.5\baselineskip}
+
+% Titel wird ausgegeben (siehe oben)
+{\huge
+\mytitle
+}
+\end{center}
+
+\vfill 
+% Persönliche Angaben
+\begin{tabular}[l]{ll}
+Name:           & \myauthor\\
+Student ID: & \myMatrikelnummer\\
+Study Programme:    & \myStudiengang\ (\nth{\mySemester} semester)\\
+Email: & \myEmail\\
+Date of Submission: & \today \\
+\end{tabular}
+
+\end{titlepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% </TITLE> %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Zeilenabstand
+\onehalfspacing
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% <Antiplagiatserklärung> %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\thispagestyle{empty}
+\vspace*{100pt}
+I, \textbf{\myauthor}, hereby certify that I have written the paper entitled \textbf{\mytitle} in the seminar \textbf{\myseminar} in the \textbf{\mysemester} with \textbf{\mydozent} and \textbf{\mydozentTwo}, \textbf{\mydozentThree}, \textbf{\mydozentFour} and \textbf{\mydozentFive} independently and only with the aids indicated within the work.
+I have clearly marked citations as well as the use of external sources, texts and aids according to the rules of scientific practice. \\
+
+I am aware that I am not allowed to claim other people's texts and text passages as my own and that a violation of this basic rule of scientific work is considered an attempt to deceive and cheat, which will result in appropriate consequences. These consist of
+the grading of the examination performance with \glqq not sufficient\grqq\ (5,0) as well as further measures if necessary. \\
+
+Furthermore, I confirm that this work has not been presented in the same or similar form in any other seminar.
+\vspace*{50pt}
+
+Heidelberg, \today \hspace{2cm} \underline{\phantom{space for signature}}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% </Antiplagiatserklärung> %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% <Inhaltsverzeichnis> %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Table of contents
+\tableofcontents
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% </Inhaltsverzeichnis> %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% <Hauptteil der Arbeit> %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{arabic}
+\input{sections/1_introduction}
+\input{sections/2_related_work}
+\input{sections/3_methods}
+\input{sections/4_results}
+\input{sections/5_discussion}
+
+
+% References (Literaturverzeichnis):
+% a) add ``Literatur'' to table of content
+\newpage
+\addcontentsline{toc}{section}{Literatur}
+% b) Style (with abbreviations: use alpha):
+\bibliographystyle{plainnat}
+% c) The File:
+\bibliography{report}
+
+\end{document}

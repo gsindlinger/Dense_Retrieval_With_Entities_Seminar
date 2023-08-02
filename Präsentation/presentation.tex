@@ -259,7 +259,6 @@ Analyzing data: $>$ 99\% queries contain at maximum 2 entities.\\
 \begin{figure}
   \includegraphics[width=\textwidth]{Grafiken/Results.png} 
 \end{figure}
-\footnotetext{Best result from the MS MARCO leaderboard or the corresponding paper.}
 }
 
 \frame{
@@ -321,7 +320,7 @@ Analyzing data: $>$ 99\% queries contain at maximum 2 entities.\\
 
 \frame{\frametitle{Questions}
 \begin{figure}
-\includegraphics[width=\textwidth]{Grafiken/questions} 
+\includegraphics[width=\textwidth]{Grafiken/example} 
 \end{figure}
 \vspace{-4cm}
 \begin{center}
@@ -582,9 +581,9 @@ $\Rightarrow$ In context of this paper rankings are based on binarized judgments
 
 \frame{
 \frametitle{Definitions: MAP@1000}
-\[ \text{MAP@1000} = \frac{1}{1000} \sum_{k=1}^{1000} \text{Precision@k} \times \text{Relevance@k} \]
-
-where \text{Precision@k} represents the precision at position k and \text{Relevance@k} represents the binary relevance label (1 if relevant, 0 if non-relevant) at position k. \\[1cm]
+\[ \text{mAP} = \frac{1}{N} \sum_{i=1}^{N} \text{AP}_i \]
+where $N$ is the total number of queries, and $AP_i$ is the average precision of query $i$ until the rank 1000. Therefore, mAP is the average of average precisions across all queries.
+\\[1cm]
 $\Rightarrow$ In context of this paper rankings are based on binarized judgments where four-point scale from nDCG@10 is used: Only labels of 2 and 3 are treated as relevant.
 }
 
