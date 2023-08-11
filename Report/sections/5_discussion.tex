@@ -4,18 +4,17 @@ Tran and Yates propose an approach that demonstrates the significant improvement
 
 \subsection{Positives}
 
-\begin{itemize}
-\item Satisfying results: As demonstrated in \autoref{subsec:outcomes}, Tran and Yates' approach outperforms the baselines, justifying the introduction of their method.
-\item Simple and intuitive approach: The ideas and explanations provided by Tran and Yates are straightforward to follow. The introduced methods, from the general model (see \autoref{subsec:general_model}) to the algorithms used (e.g., algorithm \ref{alg:query-aware-entity-representation}), have a clear structure. For instance, the choice of aggregation method for embeddings of word tokens and entities, i.e. concatenation of embeddings (see \autoref{fig:general_model}), is easier to understand than alternative approaches like max pooling or sum pooling. Based on that, the system could be extended with additional embeddings without much effort.
-\item Consideration of both effectiveness and efficiency: While many research efforts focus solely on achieving top results on leader boards, Tran and Yates' approach appears to be more oriented towards practical use and sustainability. The EVA Multi-approach offers both high effectiveness and efficiency.
-\end{itemize}
+The approach by Tran and Yates demonstrates superior performance over the baseline methods, as elucidated in the outcomes section. This substantiates the rationale behind the introduction of their approach.
+
+The concepts and elucidations provided by Tran and Yates are marked by simplicity and coherence. The introduced methods (see \autoref{sec:methods}) have a clear structure. For instance, the choice of aggregation method for embeddings of word tokens and entities, i.e. concatenation of embeddings (see \autoref{fig:general_model}), is easier to understand than alternative approaches like max pooling or sum pooling. Based on that, the system could be extended with additional embeddings without much effort.
+
+While many research efforts focus solely on achieving top results on leader boards, Tran and Yates' approach appears to be more oriented towards practical use and sustainability. The EVA Multi-approach offers both high effectiveness and efficiency.
 
 \subsection{Negatives}
 
-\begin{itemize}
-\item Entities aren't universally relevant: Tran and Yates concentrate solely on the impact of entities in their work, but their analyses reveal that for many queries, entities play no significant role. As shown in \autoref{tab:query_statistics}, 43.5 \% of all queries in the training data do not contain entities, causing the EVA models being ineffective for such queries.
-\item Lack of originality: The ideas presented by Tran and Yates are based on existing frameworks, and their contribution mainly lies in the composition of ideas from other authors. As a result, the approach, while intuitive, cannot be classified as groundbreaking. This is evident from the limited citations of their work so far, with only one citation in Kamphuis et al. \cite{kamphuis2023mmead}.
-\end{itemize}
+Tran and Yates concentrate solely on the impact of entities in their work, but their analyses reveal that for many queries, entities play no significant role. As shown in \autoref{tab:query_statistics}, 43.5 \% of all queries in the training data do not contain entities, causing the EVA models being ineffective for such queries.
+
+A further drawback of the approach is its lack of originality. Tran and Yates' propositions are rooted in pre-existing frameworks, with their primary contribution stemming from the combination of ideas from prior authors. As a result, the approach, while intuitive, cannot be classified as groundbreaking. This is evident from the limited citations of their work so far, with only one citation in Kamphuis et al. \cite{kamphuis2023mmead}.
 
 \subsection{Possible Extensions}
 The granular structure of Tran and Yates' models allows for possible extensions through the exchange or addition of individual components. For instance, the pre-trained language model used to calculate word-level embeddings could be extended beyond the two baseline models TAS BERT and ERNIE to other, more sophisticated models. In domain-specific use cases, a tailored choice of the pre-trained model might further enhance effectiveness. For example, in a biomedical context, BioBERT (Lee et. al \cite{lee2020biobert}) could be considered.
